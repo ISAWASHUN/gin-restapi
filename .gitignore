@@ -1,0 +1,6 @@
+docker
+.env
+go.mod
+go.sum
+temp
+.air.toml
