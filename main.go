@@ -11,19 +11,10 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-func main() {
-	infra.Initialize()
-	db := infra.SetupDB()
-	// items := []models.Item {
-	// 	{ID: 1, Name: "Item 1", Price: 100, Description: "This is item 1", SoldOut: false},
-	// 	{ID: 2, Name: "Item 2", Price: 200, Description: "This is item 2", SoldOut: false},
-	// 	{ID: 3, Name: "Item 3", Price: 300, Description: "This is item 3", SoldOut: true},
-	// }
-
-	// itemRepository := repositories.NewItemMemoryRepository(items)
-
+func setupRouter(db *gorm.DB) *gin.Engine {
 	itemRepository := repositories.NewItemRepository(db)
 	itemService := services.NewItemService(itemRepository)
 	itemController := controllers.NewItemController(itemService)
@@ -46,5 +37,21 @@ func main() {
 
 	authRouter.POST("/signup", authController.Signup)
 	authRouter.POST("/login", authController.Login)
+
+	return r
+}
+
+func main() {
+	infra.Initialize()
+	db := infra.SetupDB()
+	r := setupRouter(db)
+	// items := []models.Item {
+	// 	{ID: 1, Name: "Item 1", Price: 100, Description: "This is item 1", SoldOut: false},
+	// 	{ID: 2, Name: "Item 2", Price: 200, Description: "This is item 2", SoldOut: false},
+	// 	{ID: 3, Name: "Item 3", Price: 300, Description: "This is item 3", SoldOut: true},
+	// }
+
+	// itemRepository := repositories.NewItemMemoryRepository(items)
+
 	r.Run("localhost:8080")
 }
